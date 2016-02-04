@@ -1,0 +1,18 @@
+{
+  "dependencies": {},
+  "devDependencies": {},
+  "ambientDevDependencies": {
+    "empower": "github:DefinitelyTyped/DefinitelyTyped/empower/empower.d.ts#aeb7701fbef3b7fc7261d67c025c823666ab98ea",
+    "mocha": "github:DefinitelyTyped/DefinitelyTyped/mocha/mocha.d.ts#d6dd320291705694ba8e1a79497a908e9f5e6617",
+    "power-assert": "github:DefinitelyTyped/DefinitelyTyped/power-assert/power-assert.d.ts#8ab759a80cfd768be64d2215e935a73347bc68ea",
+    "power-assert-formatter": "github:DefinitelyTyped/DefinitelyTyped/power-assert-formatter/power-assert-formatter.d.ts#aeb7701fbef3b7fc7261d67c025c823666ab98ea"
+  },
+  "ambientDependencies": {
+    "express": "github:bouzuya/my-dts/express/express.d.ts#8332d5a24d81822920309e0c4bcfafeb418feb11",
+    "htmlescape": "github:bouzuya/my-dts/htmlescape/htmlescape.d.ts#5ef1b4a584610f34bf176b9c5fac584105667c6b",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#1c56e368e17bb28ca57577250624ca5bd561aa81",
+    "vdom-parser": "github:bouzuya/my-dts/vdom-parser/vdom-parser.d.ts#66d43ffe2e932b29c414d3f82097f6c111cc9ada",
+    "vdom-to-html": "github:bouzuya/my-dts/vdom-to-html/vdom-to-html.d.ts#96230b43d1e12a55014fbcc23b1c0b1c4a7185f7",
+    "virtual-dom": "github:DefinitelyTyped/DefinitelyTyped/virtual-dom/virtual-dom.d.ts#df507c636cf0c799a8a20f35af89a3d0caae6c32"
+  }
+}
