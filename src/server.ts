@@ -8,10 +8,14 @@ import { State } from './state';
 export default function main() {
   const app = express();
   app.get('/users/:userId', (req: any, res: any) => {
-    const state = model(req.params);
-    const vtree = view(state, true);
-    const html = renderToHTML(vtree);
-    res.send(html);
+    model(req.params)
+      .then(state => {
+        const vtree = view(state, true);
+        const html = renderToHTML(vtree);
+        res.send(html);
+      }, (error: Error) => {
+        res.send(error.message);
+      });
   });
   app.use(express.static(__dirname + '/../'));
   app.listen(3000);

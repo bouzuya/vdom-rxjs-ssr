@@ -8,11 +8,18 @@ const users: User[] = [
   { name: 'user3', bio: '!olleH' }
 ];
 
-const model = (params: any): State => {
+const fetchUsers = (): Promise<User[]> => {
+  return Promise.resolve(users);
+};
+
+const fetchUser = (id: number): Promise<User> => {
+  return Promise.resolve(users[id]);
+};
+
+const model = (params: any): Promise<State> => {
   const userId = parseInt(params.userId, 10);
-  return {
-    user: users[userId]
-  };
+  return fetchUser(userId)
+    .then(user => ({ user }));
 };
 
 export { model };
