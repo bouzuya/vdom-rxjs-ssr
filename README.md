@@ -2,6 +2,14 @@
 
 virtual-dom-ssr
 
+## Usage
+
+```
+$ npm run build
+$ npm start
+$ open http://localhost:3000/users/1
+```
+
 ## License
 
 [MIT](LICENSE)
