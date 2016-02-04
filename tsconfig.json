@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "module": "es2015",
+    "target": "es2015",
+    "noImplicitAny": true,
+    "outDir": ".tmp/es2015/",
+    "rootDir": ".",
+    "sourceMap": false
+  },
+  "files": [
+    "./src/client.ts",
+    "./src/server.ts",
+    "./test/add-test.ts",
+    "./typings/main.d.ts"
+  ]
+}
