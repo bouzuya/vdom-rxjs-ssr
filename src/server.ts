@@ -17,6 +17,6 @@ export default function main() {
         res.send(error.message);
       });
   });
-  app.use(express.static(__dirname + '/../'));
+  app.use(express.static(__dirname + '/../dist/'));
   app.listen(3000);
 }

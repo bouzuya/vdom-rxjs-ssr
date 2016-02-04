@@ -28,7 +28,7 @@ const view = (state: State, all: boolean = false): VirtualDOM.VTree => {
     ]),
     h('body', [
       app,
-      h('script', { src: '/bundle.js' }, [])
+      h('script', { src: '/scripts/bundle.js' }, [])
     ])
   ]);
 };
