@@ -7,8 +7,11 @@ import { State } from './state';
 
 export default function main() {
   const app = express();
-  app.get('/users/:userId', (req: any, res: any) => {
-    model(req.params)
+  app.use((req: any, res: any, next: any) => {
+    if (req.path.match(/^\/(?:images|scripts|styles)/)) {
+      return next();
+    }
+    model(req.path)
       .then(state => {
         const vtree = view(state, true);
         const html = renderToHTML(vtree);
