@@ -20,11 +20,11 @@ const makeRender = (rtree: RTree, vtree: VTree): Render => {
   };
 };
 
-const makeUpdator = (state: State, render: Render): Updater => {
+const makeUpdater = (state: State, render: Render): Updater => {
   return () => {
     const newState = update(state);
     const newRender = render(newState);
-    return makeUpdator(newState, newRender);
+    return makeUpdater(newState, newRender);
   };
 };
 
@@ -41,5 +41,5 @@ export default function main() {
   const state = (<any>window).INITIAL_STATE;
   const rtree = document.querySelector(rootSelector);
   const render = makeRender(rtree, parse(rtree))(state);
-  loop(makeUpdator(state, render));
+  loop(makeUpdater(state, render));
 }
