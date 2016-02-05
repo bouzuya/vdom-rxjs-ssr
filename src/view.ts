@@ -10,7 +10,6 @@ const renderUsers = (users: User[]): VirtualDOM.VTree => {
 };
 
 const renderUser = (user: User): VirtualDOM.VTree => {
-  if (!user) return null;
   return h('div.user', [
     h('span.name', [
       h('a', { href: '/users/' + user.id }, [user.name])
@@ -21,8 +20,12 @@ const renderUser = (user: User): VirtualDOM.VTree => {
 
 const renderApp = (state: State) => {
   return h('div#app', [
-    renderUsers(state.users),
-    renderUser(state.user)
+    h('nav', [h('a', { href: '/users/' }, ['/users'])]),
+    (
+      state.user
+      ? renderUser(state.user)
+      : renderUsers(state.users)
+    )
   ]);
 };
 
