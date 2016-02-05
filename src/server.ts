@@ -7,10 +7,8 @@ import { State } from './state';
 
 export default function main() {
   const app = express();
-  app.use((req: any, res: any, next: any) => {
-    if (req.path.match(/^\/(?:images|scripts|styles)/)) {
-      return next();
-    }
+  app.use(express.static(__dirname + '/../dist/'));
+  app.use((req: any, res: any) => {
     model(req.path)
       .then(state => {
         const vtree = view(state, true);
@@ -20,6 +18,5 @@ export default function main() {
         res.send(error.message);
       });
   });
-  app.use(express.static(__dirname + '/../dist/'));
   app.listen(3000);
 }
