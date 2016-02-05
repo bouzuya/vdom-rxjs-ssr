@@ -4,9 +4,9 @@ import { routes } from './routes';
 
 // dummy storage
 const users: User[] = [
-  { name: 'user1', bio: 'Hello!' },
-  { name: 'user2', bio: 'Hi!' },
-  { name: 'user3', bio: '!olleH' }
+  { id: 0, name: 'user1', bio: 'Hello!' },
+  { id: 1, name: 'user2', bio: 'Hi!' },
+  { id: 2, name: 'user3', bio: '!olleH' }
 ];
 
 const fetchUsers = (): Promise<User[]> => {

@@ -12,7 +12,9 @@ const renderUsers = (users: User[]): VirtualDOM.VTree => {
 const renderUser = (user: User): VirtualDOM.VTree => {
   if (!user) return null;
   return h('div.user', [
-    h('span.name', [user.name]),
+    h('span.name', [
+      h('a', { href: '/users/' + user.id }, [user.name])
+    ]),
     h('span.bio', [user.bio])
   ]);
 };
