@@ -5,7 +5,12 @@ import { User } from './user';
 
 const { h } = VirtualDOM;
 
+const renderUsers = (users: User[]): VirtualDOM.VTree => {
+  return h('ul.users', users.map(renderUser).map(user => h('li', [user])));
+};
+
 const renderUser = (user: User): VirtualDOM.VTree => {
+  if (!user) return null;
   return h('div.user', [
     h('span.name', [user.name]),
     h('span.bio', [user.bio])
@@ -14,6 +19,7 @@ const renderUser = (user: User): VirtualDOM.VTree => {
 
 const renderApp = (state: State) => {
   return h('div#app', [
+    renderUsers(state.users),
     renderUser(state.user)
   ]);
 };

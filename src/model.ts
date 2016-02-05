@@ -17,14 +17,20 @@ const fetchUser = (id: number): Promise<User> => {
   return Promise.resolve(users[id]);
 };
 
+const listUserAction = (): Promise<State> => {
+  return fetchUsers()
+    .then(users => ({ users, user: null }));
+};
+
 const showUserAction = ([id]: string[]): Promise<State> => {
   const userId = parseInt(id, 10);
   return fetchUser(userId)
-    .then(user => ({ user }));
+    .then(user => ({ users: [], user }));
 };
 
 const model = (path: string): Promise<State> => {
   return routes([
+    ['/users', listUserAction],
     ['/users/:id', showUserAction]
   ], path);
 };

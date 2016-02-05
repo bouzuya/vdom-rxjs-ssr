@@ -30,6 +30,7 @@ const makeUpdater = (state: State, render: Render): Updater => {
 
 const update = (state: State): State => {
   const { user } = state;
+  if (!user) return state;
   const { name } = user;
   const newUser = Object.assign({}, user, { name: name + '!' });
   const newState = Object.assign({}, state, { user: newUser });
