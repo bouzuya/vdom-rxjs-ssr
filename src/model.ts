@@ -82,8 +82,8 @@ const initEvents = (state: State): EventEmitter => {
   events.on('request', ({ path, done }: RequestActionOptions): void => {
     property
       .update(pathToUpdater(path))
-      .then(state => {
-        const vtree = view(state, true);
+      .then(state => view(state, true))
+      .then(vtree => {
         done(null, vtree);
       }, (error: Error) => {
         done(error);
@@ -95,8 +95,8 @@ const initEvents = (state: State): EventEmitter => {
   events.on('update', (updater: Updater<State>): void => {
     property
       .update(updater)
-      .then(state => {
-        const vtree = view(state, false);
+      .then(state => view(state, true))
+      .then(vtree => {
         events.emit('vtree-updated', vtree);
       });
   });
