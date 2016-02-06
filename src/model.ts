@@ -9,9 +9,9 @@ import { Property, Updater } from './property';
 
 // dummy storage
 const users: User[] = [
-  { id: 0, name: 'user1', bio: 'Hello!' },
-  { id: 1, name: 'user2', bio: 'Hi!' },
-  { id: 2, name: 'user3', bio: '!olleH' }
+  { id: 0, name: 'user1', bio: 'Hello!', likeCount: 2 },
+  { id: 1, name: 'user2', bio: 'Hi!', likeCount: 1 },
+  { id: 2, name: 'user3', bio: '!olleH', likeCount: 0 }
 ];
 
 const fetchUsers = (): Promise<User[]> => {
