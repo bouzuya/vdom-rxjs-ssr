@@ -14,7 +14,9 @@ const renderUser = (user: User): VirtualDOM.VTree => {
     h('span.name', [
       h('a', { href: '/users/' + user.id }, [user.name])
     ]),
-    h('span.bio', [user.bio])
+    h('span.bio', [user.bio]),
+    h('button.like-button', { type: 'button' }, ['+1']),
+    h('span.like', Array.from(new Array(user.likeCount)).map(() => '\u2606'))
   ]);
 };
 
