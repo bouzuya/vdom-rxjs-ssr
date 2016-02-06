@@ -1,22 +1,25 @@
 import express from 'express';
-import renderToHTML from 'vdom-to-html';
-import { model } from './model';
-import { view } from './view';
-import { User } from './user';
-import { State } from './state';
+import { init } from './model';
+
+type Request = { path: string };
+type Response = { send: (html: string) => void };
+type ServerRequestHandler = (req: Request, res: Response) => void;
+
+const makeServerRequestHandler = (): ServerRequestHandler => {
+  const emit = init();
+  return (req: Request, res: Response): void => {
+    const eventName = 'request';
+    const eventOptions = {
+      path: req.path,
+      done: (html: string): void => res.send(html)
+    };
+    emit(eventName, eventOptions);
+  };
+};
 
 export default function main() {
   const app = express();
   app.use(express.static(__dirname + '/../dist/'));
-  app.use((req: any, res: any) => {
-    model(req.path)
-      .then(state => {
-        const vtree = view(state, true);
-        const html = renderToHTML(vtree);
-        res.send(html);
-      }, (error: Error) => {
-        res.send(error.message);
-      });
-  });
+  app.use(makeServerRequestHandler());
   app.listen(3000);
 }

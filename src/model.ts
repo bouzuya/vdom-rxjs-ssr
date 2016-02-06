@@ -1,6 +1,9 @@
+import { EventEmitter } from 'events';
+import renderToHTML from 'vdom-to-html';
 import { State } from './state';
 import { User } from './user';
 import { routes } from './routes';
+import { view } from './view';
 
 // dummy storage
 const users: User[] = [
@@ -35,4 +38,21 @@ const model = (path: string): Promise<State> => {
   ], path);
 };
 
-export { model };
+const init = (): ((eventName: string, options: any) => void) => {
+  const events = new EventEmitter();
+  events.on('request', ({ path, done }) => {
+    model(path)
+      .then(state => {
+        const vtree = view(state, true);
+        const html = renderToHTML(vtree);
+        done(html);
+      }, (error: Error) => {
+        done(error.message);
+      });
+  });
+  return (eventName: string, options: any): void => {
+    events.emit(eventName, options);
+  };
+};
+
+export { model, init };
