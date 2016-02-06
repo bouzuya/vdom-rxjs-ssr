@@ -60,4 +60,31 @@ const init = (): ((eventName: string, options: any) => void) => {
   };
 };
 
-export { model, init };
+const changeName = (state: State): State => {
+  const { user } = state;
+  if (!user) return state;
+  const { name } = user;
+  const newUser = Object.assign({}, user, { name: name + '!' });
+  const newState = Object.assign({}, state, { user: newUser });
+  return newState;
+};
+
+const initClient = (state: any) => {
+  const events = new EventEmitter();
+  events.on('request', requestAction);
+  events.on('change-name', () => events.emit('update', changeName));
+  events.on('update', (update: (state: State) => State): void => {
+    state = update(state);
+    const vtree = view(state, false);
+    events.emit('vtree-updated', vtree);
+  });
+  const emit = (eventName: string, options?: any): void => {
+    events.emit(eventName, options);
+  };
+  const on = (eventName: string, options?: any): void => {
+    events.on.apply(events, [eventName, options]);
+  };
+  return { emit, on };
+};
+
+export { model, init, initClient };
