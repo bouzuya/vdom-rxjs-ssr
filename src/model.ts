@@ -39,7 +39,7 @@ const showUserAction = (id: string): Updater<State> => {
   };
 };
 
-const makeChangeName = (): Updater<State> => {
+const changeNameAction = (): Updater<State> => {
   return (state: State): Promise<State> => {
     const { user } = state;
     if (!user) return Promise.resolve(state);
@@ -62,16 +62,26 @@ type RequestActionOptions = {
   done: (error: Error, vtree?: any) => void;
 };
 
-const init = (state?: any): InitResponse => {
-  const property = new Property(state);
+const makePathToHandler = (routeConfig: any[]) => {
+  return (path: string) => routes(routeConfig, path);
+};
+
+const initEvents = (state: State): EventEmitter => {
   const events = new EventEmitter();
+  const property = new Property(state);
+  const pathToUpdater = makePathToHandler([
+    ['/users', () => listUserAction()],
+    ['/users/:id', ([id]: string[]) => showUserAction(id)]
+  ]);
+  events.on('change-name', () => {
+    events.emit('update', changeNameAction());
+  });
+  events.on('list-users', () => {
+    events.emit('update', listUserAction());
+  });
   events.on('request', ({ path, done }: RequestActionOptions): void => {
-    const updater = routes([
-      ['/users', () => listUserAction()],
-      ['/users/:id', ([id]: string[]) => showUserAction(id)]
-    ], path);
     property
-      .update(updater)
+      .update(pathToUpdater(path))
       .then(state => {
         const vtree = view(state, true);
         done(null, vtree);
@@ -79,19 +89,22 @@ const init = (state?: any): InitResponse => {
         done(error);
       });
   });
-  events.on('change-name', () => events.emit('update', makeChangeName()));
-  events.on('list-users', () => events.emit('update', listUserAction()));
-  events.on('show-user', (id: string) =>
-    events.emit('update', showUserAction(id))
-  );
-  events.on('update', (update: Updater<State>): void => {
+  events.on('show-user', (id: string) => {
+    events.emit('update', showUserAction(id));
+  });
+  events.on('update', (updater: Updater<State>): void => {
     property
-      .update(update)
+      .update(updater)
       .then(state => {
         const vtree = view(state, false);
         events.emit('vtree-updated', vtree);
       });
   });
+  return events;
+};
+
+const init = (state?: any): InitResponse => {
+  const events = initEvents(state);
   const emit = (eventName: string, options?: any): void => {
     events.emit(eventName, options);
   };
