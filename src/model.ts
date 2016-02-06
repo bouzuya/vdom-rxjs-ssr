@@ -95,7 +95,7 @@ const initEvents = (state: State): EventEmitter => {
   events.on('update', (updater: Updater<State>): void => {
     property
       .update(updater)
-      .then(state => view(state, true))
+      .then(state => view(state, false))
       .then(vtree => {
         events.emit('vtree-updated', vtree);
       });
