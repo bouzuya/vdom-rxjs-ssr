@@ -12,6 +12,7 @@
     "./src/client.ts",
     "./src/server.ts",
     "./test/add-test.ts",
+    "./test/property-test.ts",
     "./typings/main.d.ts"
   ]
 }
