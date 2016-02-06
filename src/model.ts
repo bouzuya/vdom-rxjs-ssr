@@ -30,21 +30,17 @@ const showUserAction = ([id]: string[]): Promise<State> => {
     .then(user => ({ users: [], user }));
 };
 
-const model = (path: string): Promise<State> => {
-  return routes([
-    ['/users', listUserAction],
-    ['/users/:id', showUserAction]
-  ], path);
-};
-
 type RequestActionOptions = {
   path: string;
   done: (error: Error, vtree?: any) => void;
 };
 
 const requestAction = ({ path, done }: RequestActionOptions): void => {
-  model(path)
-    .then(state => {
+  routes([
+    ['/users', listUserAction],
+    ['/users/:id', showUserAction]
+  ], path)
+    .then((state: State) => {
       const vtree = view(state, true);
       done(null, vtree);
     }, (error: Error) => {
@@ -87,4 +83,4 @@ const init = (state?: any): InitResponse => {
   return { emit, on };
 };
 
-export { model, init };
+export { init };
