@@ -5,7 +5,7 @@ import { State } from './state';
 
 type RTree = Element;
 type VTree = VirtualDOM.VTree;
-type Render = (state: State) => Render;
+type Render = (vtree: VTree) => Render;
 type Updater = () => Updater;
 
 const loop = (f: any) => {
@@ -13,8 +13,7 @@ const loop = (f: any) => {
 };
 
 const makeRender = (rtree: RTree, vtree: VTree): Render => {
-  return (state: State): Render => {
-    const newVTree = view(state, false);
+  return (newVTree: VTree): Render => {
     const newRTree = patch(rtree, diff(vtree, newVTree));
     return makeRender(newRTree, newVTree);
   };
@@ -23,7 +22,8 @@ const makeRender = (rtree: RTree, vtree: VTree): Render => {
 const makeUpdater = (state: State, render: Render): Updater => {
   return () => {
     const newState = update(state);
-    const newRender = render(newState);
+    const newVTree = view(state, false);
+    const newRender = render(newVTree);
     return makeUpdater(newState, newRender);
   };
 };
