@@ -52,13 +52,13 @@ const requestAction = ({ path, done }: RequestActionOptions): void => {
     });
 };
 
-const changeName = (state: State): State => {
+const changeName = (state: State): Promise<State> => {
   const { user } = state;
-  if (!user) return state;
+  if (!user) return Promise.resolve(state);
   const { name } = user;
   const newUser = Object.assign({}, user, { name: name + '!' });
   const newState = Object.assign({}, state, { user: newUser });
-  return newState;
+  return Promise.resolve(newState);
 };
 
 type InitResponse = {
@@ -70,10 +70,13 @@ const init = (state?: any): InitResponse => {
   const events = new EventEmitter();
   events.on('request', requestAction);
   events.on('change-name', () => events.emit('update', changeName));
-  events.on('update', (update: (state: State) => State): void => {
-    state = update(state);
-    const vtree = view(state, false);
-    events.emit('vtree-updated', vtree);
+  events.on('update', (update: (state: State) => Promise<State>): void => {
+    update(state)
+      .then(newState => state = newState)
+      .then(newState => {
+        const vtree = view(newState, false);
+        events.emit('vtree-updated', vtree);
+      });
   });
   const emit = (eventName: string, options?: any): void => {
     events.emit(eventName, options);
