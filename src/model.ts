@@ -38,18 +38,25 @@ const model = (path: string): Promise<State> => {
   ], path);
 };
 
+type RequestActionOptions = {
+  path: string;
+  done: (html: string) => void;
+};
+
+const requestAction = ({ path, done }: RequestActionOptions): void => {
+  model(path)
+    .then(state => {
+      const vtree = view(state, true);
+      const html = renderToHTML(vtree);
+      done(html);
+    }, (error: Error) => {
+      done(error.message);
+    });
+};
+
 const init = (): ((eventName: string, options: any) => void) => {
   const events = new EventEmitter();
-  events.on('request', ({ path, done }) => {
-    model(path)
-      .then(state => {
-        const vtree = view(state, true);
-        const html = renderToHTML(vtree);
-        done(html);
-      }, (error: Error) => {
-        done(error.message);
-      });
-  });
+  events.on('request', requestAction);
   return (eventName: string, options: any): void => {
     events.emit(eventName, options);
   };
