@@ -3,6 +3,7 @@ import { State } from './state';
 import { User } from './user';
 import { routes } from './routes';
 import { view } from './view';
+import { Property, Updater } from './property';
 
 // dummy storage
 const users: User[] = [
@@ -63,12 +64,13 @@ type InitResponse = {
 };
 
 const init = (state?: any): InitResponse => {
+  const property = new Property(state);
   const events = new EventEmitter();
   events.on('request', requestAction);
   events.on('change-name', () => events.emit('update', changeName));
-  events.on('update', (update: (state: State) => Promise<State>): void => {
-    update(state)
-      .then(newState => state = newState)
+  events.on('update', (update: Updater<State>): void => {
+    property
+      .update(update)
       .then(newState => {
         const vtree = view(newState, false);
         events.emit('vtree-updated', vtree);

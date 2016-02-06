@@ -35,4 +35,4 @@ class Property<T> {
   }
 }
 
-export { Property };
+export { Property, Updater };
