@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import renderToHTML from 'vdom-to-html';
 import { State } from './state';
 import { User } from './user';
 import { routes } from './routes';
@@ -40,17 +39,16 @@ const model = (path: string): Promise<State> => {
 
 type RequestActionOptions = {
   path: string;
-  done: (html: string) => void;
+  done: (error: Error, vtree?: any) => void;
 };
 
 const requestAction = ({ path, done }: RequestActionOptions): void => {
   model(path)
     .then(state => {
       const vtree = view(state, true);
-      const html = renderToHTML(vtree);
-      done(html);
+      done(null, vtree);
     }, (error: Error) => {
-      done(error.message);
+      done(error);
     });
 };
 
