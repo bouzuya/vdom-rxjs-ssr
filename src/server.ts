@@ -18,7 +18,7 @@ const makeDone = (response: Response): Done => {
 };
 
 const makeServerRequestHandler = (): ServerRequestHandler => {
-  const emit = init();
+  const { emit } = init();
   return (req: Request, res: Response): void => {
     const eventName = 'request';
     const eventOptions = {

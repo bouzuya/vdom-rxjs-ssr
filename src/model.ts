@@ -52,14 +52,6 @@ const requestAction = ({ path, done }: RequestActionOptions): void => {
     });
 };
 
-const init = (): ((eventName: string, options: any) => void) => {
-  const events = new EventEmitter();
-  events.on('request', requestAction);
-  return (eventName: string, options: any): void => {
-    events.emit(eventName, options);
-  };
-};
-
 const changeName = (state: State): State => {
   const { user } = state;
   if (!user) return state;
@@ -69,7 +61,12 @@ const changeName = (state: State): State => {
   return newState;
 };
 
-const initClient = (state: any) => {
+type InitResponse = {
+  emit: (eventName: string, options?: any) => void;
+  on: (eventName: string, options?: any) => void;
+};
+
+const init = (state?: any): InitResponse => {
   const events = new EventEmitter();
   events.on('request', requestAction);
   events.on('change-name', () => events.emit('update', changeName));
@@ -87,4 +84,4 @@ const initClient = (state: any) => {
   return { emit, on };
 };
 
-export { model, init, initClient };
+export { model, init };
