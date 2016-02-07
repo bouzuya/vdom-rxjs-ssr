@@ -66,6 +66,8 @@ const changeNameAction = (): Updater<State> => {
 type InitResponse = {
   emit: (eventName: string, options?: any) => void;
   on: (eventName: string, options?: any) => void;
+  rootSelector: string;
+  events: [string, string, string[]][];
 };
 
 type RequestActionOptions = {
@@ -84,6 +86,7 @@ const initEvents = (state: State): EventEmitter => {
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
+  setInterval(() => events.emit('change-name'), 1000);
   events.on('click-like', (event: Event) => {
     const userId = (<any> event.target).dataset.userId;
     events.emit('update', clickLikeAction(userId));
@@ -119,14 +122,18 @@ const initEvents = (state: State): EventEmitter => {
 };
 
 const init = (state?: any): InitResponse => {
-  const events = initEvents(state);
+  const emitter = initEvents(state);
   const emit = (eventName: string, options?: any): void => {
-    events.emit(eventName, options);
+    emitter.emit(eventName, options);
   };
   const on = (eventName: string, options?: any): void => {
-    events.on.apply(events, [eventName, options]);
+    emitter.on.apply(emitter, [eventName, options]);
   };
-  return { emit, on };
+  const rootSelector = 'div#app';
+  const events: [string, string, string[]][] = [
+    ['click', 'button', ['click-like']]
+  ];
+  return { emit, on, events, rootSelector };
 };
 
 export { init };

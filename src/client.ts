@@ -14,10 +14,10 @@ const attachEvent = (
   rtree.addEventListener(eventName, listener, false);
 };
 
-const buildEvents = (emit: Emitter): [string, EventListener][] => {
-  const events: [string, string, string[]][] = [
-    ['click', 'button', ['click-like']]
-  ];
+const buildEventListeners = (
+  events: [string, string, string[]][],
+  emit: Emitter
+): [string, EventListener][] => {
   const eventsObject: { [eventName: string]: [string, string[]][] } = {};
   events.forEach(([eventName, selector, emitArgs]) => {
     const obj = eventsObject[eventName];
@@ -38,10 +38,13 @@ const buildEvents = (emit: Emitter): [string, EventListener][] => {
     });
 };
 
-const makeAttachEvents = (emit: (eventName: string, options?: any) => void) => {
-  const events = buildEvents(emit);
+const makeAttachEvents = (
+  events: [string, string, string[]][],
+  emit: Emitter
+) => {
+  const eventListeners = buildEventListeners(events, emit);
   return (rtree: RTree): void => {
-    events.forEach(([eventName, listener]) => {
+    eventListeners.forEach(([eventName, listener]) => {
       attachEvent(rtree, eventName, listener);
     });
   };
@@ -76,12 +79,10 @@ const matchEvent = (event: Event, selector: string): boolean => {
 };
 
 export default function main() {
-  const rootSelector = 'div#app';
   const state = (<any>window).INITIAL_STATE;
-  const { emit, on } = init(state);
+  const { emit, on, events, rootSelector } = init(state);
   const rtree = document.querySelector(rootSelector);
-  let render = makeRender(rtree, parse(rtree), makeAttachEvents(emit));
+  let render = makeRender(rtree, parse(rtree), makeAttachEvents(events, emit));
   render = render(state); // initial render (attach event)
   on('vtree-updated', (vtree: VTree) => render = render(vtree));
-  setInterval(() => emit('change-name'), 1000);
 }
