@@ -24,11 +24,22 @@ const fetchUser = (id: number): Promise<User> => {
 
 // Updater
 
+const clickLikeAction = (id: string): Updater<State> => {
+  return (state: State): Promise<State> => {
+    const userId = parseInt(id, 10);
+    const newUsers = state.users.map(user => {
+      if (user.id !== userId) return user;
+      return Object.assign({}, user, { likeCount: user.likeCount + 1 });
+    });
+    return Promise.resolve(Object.assign({}, state, { users: newUsers }));
+  };
+};
+
 const listUserAction = (): Updater<State> => {
   return (state: State): Promise<State> => {
     return fetchUsers()
       .then(user => Object.assign({}, state, ({ users, user: null })));
-  };;
+  };
 };
 
 const showUserAction = (id: string): Updater<State> => {
@@ -73,6 +84,10 @@ const initEvents = (state: State): EventEmitter => {
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
+  events.on('click-like', (event: Event) => {
+    const userId = (<any> event.target).dataset.userId;
+    events.emit('update', clickLikeAction(userId));
+  });
   events.on('change-name', () => {
     events.emit('update', changeNameAction());
   });

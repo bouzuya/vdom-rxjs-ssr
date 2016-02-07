@@ -31,7 +31,7 @@ const buildEvents = (emit: Emitter): [string, EventListener][] => {
       const listener = (event: Event) => {
         selectors.forEach(([selector, emitArgs]) => {
           const match = matchEvent(event, selector);
-          if (match) emit.apply(null, emitArgs);
+          if (match) emit.apply(null, (<any[]> emitArgs).concat([event]));
         })
       };
       return [eventName, listener];
@@ -81,6 +81,7 @@ export default function main() {
   const { emit, on } = init(state);
   const rtree = document.querySelector(rootSelector);
   let render = makeRender(rtree, parse(rtree), makeAttachEvents(emit));
+  render = render(state); // initial render (attach event)
   on('vtree-updated', (vtree: VTree) => render = render(vtree));
   setInterval(() => emit('change-name'), 1000);
 }
