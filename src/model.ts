@@ -3,7 +3,9 @@ import { State } from './state';
 import { User } from './user';
 import { routes } from './routes';
 import { view } from './view';
-import { Property, Updater } from './property';
+import { PromisedState, PromisedStateUpdater } from 'promised-state';
+
+type Updater<T> = PromisedStateUpdater<T>;
 
 // Resource
 
@@ -81,7 +83,7 @@ const makePathToHandler = (routeConfig: any[]) => {
 
 const initEvents = (state: State): EventEmitter => {
   const events = new EventEmitter();
-  const property = new Property(state);
+  const property = new PromisedState(state);
   const pathToUpdater = makePathToHandler([
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
