@@ -67,7 +67,7 @@ type InitResponse = {
   emit: (eventName: string, options?: any) => void;
   on: (eventName: string, options?: any) => void;
   rootSelector: string;
-  events: [string, string, string[]][];
+  events: [string, string, EventListener][];
 };
 
 type RequestActionOptions = {
@@ -129,9 +129,12 @@ const init = (state?: any): InitResponse => {
   const on = (eventName: string, options?: any): void => {
     emitter.on.apply(emitter, [eventName, options]);
   };
+  const makeEventListener = (eventName: string): EventListener => {
+    return (event: Event): void => { emit(eventName, event); };
+  };
   const rootSelector = 'div#app';
-  const events: [string, string, string[]][] = [
-    ['click', 'button', ['click-like']]
+  const events: [string, string, EventListener][] = [
+    ['button', 'click', makeEventListener('click-like')]
   ];
   return { emit, on, events, rootSelector };
 };
