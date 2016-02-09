@@ -1,5 +1,5 @@
 import { init } from './model';
-import { DOM, VTree } from './dom';
+import { DOM, VTree } from './libs/dom';
 
 export default function main() {
   const state = (<any>window).INITIAL_STATE;
