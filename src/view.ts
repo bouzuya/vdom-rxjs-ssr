@@ -1,7 +1,7 @@
 import * as VirtualDOM from 'virtual-dom';
 import htmlescape from 'htmlescape';
-import { State } from './state';
-import { User } from './user';
+import { State } from './models/state';
+import { User } from './models/user';
 
 const { h } = VirtualDOM;
 
