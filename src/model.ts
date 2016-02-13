@@ -65,33 +65,25 @@ const changeNameAction = (): Updater<State> => {
 
 // init
 
+type ListenerProxy = (...args: any[]) => void;
+
 type InitResponse = {
   emit: (eventName: string, options?: any) => void;
   on: (eventName: string, options?: any) => void;
   rootSelector: string;
-  events: [string, string, EventListener][];
-};
-
-type RequestActionOptions = {
-  path: string;
-  done: (error: Error, vtree?: any) => void;
+  events: [string, string, ListenerProxy][];
+  router: Router<void>;
 };
 
 const initEvents = (state: State): EventEmitter => {
   const events = new EventEmitter();
   const property = new PromisedState(state);
-  const router = new Router<void>([
-    ['/users', () => { events.emit('update', listUserAction()); }],
-    ['/users/:id', ([id]: string[]) => {
-      events.emit('update', showUserAction(id));
-    }]
-  ]);
   setInterval(() => events.emit('change-name'), 1000);
   events.on('click-anchor', (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     const path = (<any> event.target).getAttribute('href');
-    router.go(path);
+    events.emit('go', path);
   });
   events.on('click-like', (event: Event) => {
     const userId = (<any> event.target).dataset.userId;
@@ -99,6 +91,13 @@ const initEvents = (state: State): EventEmitter => {
   });
   events.on('change-name', () => {
     events.emit('update', changeNameAction());
+  });
+  // events.on('go', ...); // set up by HistoryRouter in client-side.
+  events.on('list-users', () => {
+    events.emit('update', listUserAction());
+  });
+  events.on('show-user', ([id]: string[]) => {
+    events.emit('update', showUserAction(id));
   });
   events.on('update', (updater: Updater<State>): void => {
     property
@@ -108,7 +107,6 @@ const initEvents = (state: State): EventEmitter => {
         events.emit('vtree-updated', vtree);
       });
   });
-  router.start();
   return events;
 };
 
@@ -120,15 +118,21 @@ const client = (state?: any): InitResponse => {
   const on = (eventName: string, options?: any): void => {
     emitter.on.apply(emitter, [eventName, options]);
   };
-  const makeEventListener = (eventName: string): EventListener => {
-    return (event: Event): void => { emit(eventName, event); };
+  const makeListenerProxy = (eventName: string): ListenerProxy => {
+    return (...args: any[]): void => {
+      emit.apply(null, [eventName].concat(args));
+    };
   };
   const rootSelector = 'div#app';
-  const events: [string, string, EventListener][] = [
-    ['a', 'click', makeEventListener('click-anchor')],
-    ['button', 'click', makeEventListener('click-like')]
+  const events: [string, string, ListenerProxy][] = [
+    ['a', 'click', makeListenerProxy('click-anchor')],
+    ['button', 'click', makeListenerProxy('click-like')]
   ];
-  return { emit, on, events, rootSelector };
+  const router = new Router<void>([
+    ['/users', makeListenerProxy('list-users')],
+    ['/users/:id', makeListenerProxy('show-user')]
+  ]);
+  return { emit, on, events, rootSelector, router };
 };
 
 const server = (path: string): Promise<VirtualDOM.VTree> => {
@@ -137,8 +141,9 @@ const server = (path: string): Promise<VirtualDOM.VTree> => {
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
   const initialState: State = { users: [], user: null };
-  return Promise.resolve(initialState)
-    .then(router.go(path))
+  return Promise
+    .resolve(initialState)
+    .then(router.route(path))
     .then(state => view(state, true));
 };
 
