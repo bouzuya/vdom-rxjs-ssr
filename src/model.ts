@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { State } from './models/state';
 import { User } from './models/user';
-import { Router } from './router';
+import { Router } from './libs/router';
 import { view } from './view';
 import { PromisedState, PromisedStateUpdater } from 'promised-state';
 
