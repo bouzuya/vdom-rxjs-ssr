@@ -135,16 +135,19 @@ const client = (state?: any): InitResponse => {
   return { emit, on, events, rootSelector, router };
 };
 
-const server = (path: string): Promise<VirtualDOM.VTree> => {
+const server = (): { render: (path: string) => Promise<VirtualDOM.VTree> } => {
   const router = new Router<Updater<State>>([
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
-  const initialState: State = { users: [], user: null };
-  return Promise
-    .resolve(initialState)
-    .then(router.route(path))
-    .then(state => view(state, true));
+  const render = (path: string) => {
+    const initialState: State = { users: [], user: null };
+    return Promise
+      .resolve(initialState)
+      .then(router.route(path))
+      .then(state => view(state, true));
+  };
+  return { render };
 };
 
 export { client, server };
