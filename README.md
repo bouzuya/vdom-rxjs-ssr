@@ -1,6 +1,6 @@
 # virtual-dom-ssr
 
-virtual-dom-ssr
+server-side rendering. virtual-dom & EventEmitter.
 
 ## Usage
 
