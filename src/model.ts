@@ -68,7 +68,6 @@ const changeNameAction = (): Updater<State> => {
 type ListenerProxy = (...args: any[]) => void;
 
 type InitResponse = {
-  emit: (eventName: string, options?: any) => void;
   on: (eventName: string, options?: any) => void;
   rootSelector: string;
   events: [string, string, ListenerProxy][];
@@ -112,15 +111,12 @@ const initEvents = (state: State): EventEmitter => {
 
 const client = (state?: any): InitResponse => {
   const emitter = initEvents(state);
-  const emit = (eventName: string, options?: any): void => {
-    emitter.emit(eventName, options);
-  };
   const on = (eventName: string, options?: any): void => {
     emitter.on.apply(emitter, [eventName, options]);
   };
   const makeListenerProxy = (eventName: string): ListenerProxy => {
     return (...args: any[]): void => {
-      emit.apply(null, [eventName].concat(args));
+      emitter.emit.apply(emitter, [eventName].concat(args));
     };
   };
   const rootSelector = 'div#app';
@@ -132,7 +128,7 @@ const client = (state?: any): InitResponse => {
     ['/users', makeListenerProxy('list-users')],
     ['/users/:id', makeListenerProxy('show-user')]
   ]);
-  return { emit, on, events, rootSelector, router };
+  return { events, on, rootSelector, router };
 };
 
 const server = (): { render: (path: string) => Promise<VirtualDOM.VTree> } => {

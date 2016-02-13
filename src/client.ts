@@ -4,7 +4,7 @@ import { HistoryRouter } from './libs/history-router';
 
 export default function main() {
   const state = (<any>window).INITIAL_STATE;
-  const { emit, on, events, rootSelector, router } = client(state);
+  const { on, events, rootSelector, router } = client(state);
   const dom = new DOM(rootSelector);
   events.forEach(([selector, eventName, listener]) => {
     dom.on(selector, eventName, listener);
