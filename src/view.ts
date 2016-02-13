@@ -2,27 +2,12 @@ import * as VirtualDOM from 'virtual-dom';
 import htmlescape from 'htmlescape';
 import { State } from './models/state';
 import { User } from './models/user';
+import renderUser from './views/user';
 
 const { h } = VirtualDOM;
 
 const renderUsers = (users: User[]): VirtualDOM.VTree => {
   return h('ul.users', users.map(renderUser).map(user => h('li', [user])));
-};
-
-const renderUser = (user: User): VirtualDOM.VTree => {
-  return h('div.user', [
-    h('span.name', [
-      h('a', { href: '/users/' + user.id }, [user.name])
-    ]),
-    h('span.bio', [user.bio]),
-    h('button.like-button', {
-      type: 'button',
-      attributes: {
-        'data-user-id': user.id.toString()
-      }
-    }, ['+1']),
-    h('span.like', Array.from(new Array(user.likeCount)).map(() => '\u2606'))
-  ]);
 };
 
 const renderApp = (state: State) => {
