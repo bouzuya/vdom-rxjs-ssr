@@ -1,5 +1,5 @@
 import express from 'express';
-import { initBy } from './model';
+import { server } from './model';
 import renderToHTML from 'vdom-to-html';
 
 type Request = { path: string };
@@ -13,7 +13,7 @@ export default function main() {
   });
   app.use(express.static(__dirname + '/../dist/'));
   app.use((req: Request, res: Response): void => {
-    initBy(req.path)
+    server(req.path)
       .then(vtree => {
         res.send(renderToHTML(vtree));
       }, error => {

@@ -112,7 +112,7 @@ const initEvents = (state: State): EventEmitter => {
   return events;
 };
 
-const init = (state?: any): InitResponse => {
+const client = (state?: any): InitResponse => {
   const emitter = initEvents(state);
   const emit = (eventName: string, options?: any): void => {
     emitter.emit(eventName, options);
@@ -131,7 +131,7 @@ const init = (state?: any): InitResponse => {
   return { emit, on, events, rootSelector };
 };
 
-const initBy = (path: string): Promise<VirtualDOM.VTree> => {
+const server = (path: string): Promise<VirtualDOM.VTree> => {
   const router = new Router<Updater<State>>([
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
@@ -142,4 +142,4 @@ const initBy = (path: string): Promise<VirtualDOM.VTree> => {
     .then(state => view(state, true));
 };
 
-export { init, initBy };
+export { client, server };
