@@ -141,4 +141,11 @@ const init = (state?: any): InitResponse => {
   return { emit, on, events, rootSelector };
 };
 
-export { init };
+const initBy: (path: string) => Promise<State> = (path) => {
+  return makePathToHandler([
+    ['/users', () => listUserAction()],
+    ['/users/:id', ([id]: string[]) => showUserAction(id)]
+  ])(path);
+};
+
+export { init, initBy };
