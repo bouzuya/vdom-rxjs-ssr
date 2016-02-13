@@ -12,7 +12,7 @@ const renderUsers = (users: User[]): VirtualDOM.VTree => {
 
 const renderApp = (state: State) => {
   return h('div#app', [
-    h('nav', [h('a', { href: '/users/' }, ['/users'])]),
+    h('nav', [h('a', { href: '/users' }, ['/users'])]),
     (
       state.user
       ? renderUser(state.user)

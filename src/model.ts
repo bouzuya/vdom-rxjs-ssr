@@ -89,6 +89,14 @@ const initEvents = (state: State): EventEmitter => {
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
   setInterval(() => events.emit('change-name'), 1000);
+  events.on('click-anchor', (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const path = (<any> event.target).getAttribute('href');
+    window.history.pushState(null, null, path);
+    const updater = pathToUpdater(path);
+    events.emit('update', updater);
+  });
   events.on('click-like', (event: Event) => {
     const userId = (<any> event.target).dataset.userId;
     events.emit('update', clickLikeAction(userId));
@@ -136,6 +144,7 @@ const init = (state?: any): InitResponse => {
   };
   const rootSelector = 'div#app';
   const events: [string, string, EventListener][] = [
+    ['a', 'click', makeEventListener('click-anchor')],
     ['button', 'click', makeEventListener('click-like')]
   ];
   return { emit, on, events, rootSelector };
