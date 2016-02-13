@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { State } from './models/state';
 import { User } from './models/user';
-import { routes } from './routes';
+import { Router } from './router';
 import { view } from './view';
 import { PromisedState, PromisedStateUpdater } from 'promised-state';
 
@@ -77,32 +77,21 @@ type RequestActionOptions = {
   done: (error: Error, vtree?: any) => void;
 };
 
-const makePathToHandler = (routeConfig: any[]) => {
-  return (path: string) => routes(routeConfig, path);
-};
-
 const initEvents = (state: State): EventEmitter => {
   const events = new EventEmitter();
   const property = new PromisedState(state);
-  const pathToUpdater = makePathToHandler([
-    ['/users', () => listUserAction()],
-    ['/users/:id', ([id]: string[]) => showUserAction(id)]
+  const router = new Router<void>([
+    ['/users', () => { events.emit('update', listUserAction()); }],
+    ['/users/:id', ([id]: string[]) => {
+      events.emit('update', showUserAction(id));
+    }]
   ]);
   setInterval(() => events.emit('change-name'), 1000);
-  events.on('browser-back', (event: Event) => {
-    // FIXME
-    const path = window.location.pathname;
-    const updater = pathToUpdater(path);
-    events.emit('update', updater);
-  });
   events.on('click-anchor', (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     const path = (<any> event.target).getAttribute('href');
-    // FIXME
-    window.history.pushState(null, null, path);
-    const updater = pathToUpdater(path);
-    events.emit('update', updater);
+    router.go(path);
   });
   events.on('click-like', (event: Event) => {
     const userId = (<any> event.target).dataset.userId;
@@ -110,22 +99,6 @@ const initEvents = (state: State): EventEmitter => {
   });
   events.on('change-name', () => {
     events.emit('update', changeNameAction());
-  });
-  events.on('list-users', () => {
-    events.emit('update', listUserAction());
-  });
-  events.on('request', ({ path, done }: RequestActionOptions): void => {
-    property
-      .update(pathToUpdater(path))
-      .then(state => view(state, true))
-      .then(vtree => {
-        done(null, vtree);
-      }, (error: Error) => {
-        done(error);
-      });
-  });
-  events.on('show-user', (id: string) => {
-    events.emit('update', showUserAction(id));
   });
   events.on('update', (updater: Updater<State>): void => {
     property
@@ -135,6 +108,7 @@ const initEvents = (state: State): EventEmitter => {
         events.emit('vtree-updated', vtree);
       });
   });
+  router.start();
   return events;
 };
 
@@ -154,20 +128,18 @@ const init = (state?: any): InitResponse => {
     ['a', 'click', makeEventListener('click-anchor')],
     ['button', 'click', makeEventListener('click-like')]
   ];
-  // FIXME
-  const window = Function('return this')();
-  if (window.addEventListener) {
-    const listener = makeEventListener('browser-back');
-    window.addEventListener('popstate', listener, false);
-  }
   return { emit, on, events, rootSelector };
 };
 
-const initBy: (path: string) => Promise<State> = (path) => {
-  return makePathToHandler([
+const initBy = (path: string): Promise<VirtualDOM.VTree> => {
+  const router = new Router<Updater<State>>([
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
-  ])(path);
+  ]);
+  const initialState: State = { users: [], user: null };
+  return Promise.resolve(initialState)
+    .then(router.go(path))
+    .then(state => view(state, true));
 };
 
 export { init, initBy };
