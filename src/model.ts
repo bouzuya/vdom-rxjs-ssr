@@ -89,10 +89,17 @@ const initEvents = (state: State): EventEmitter => {
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
   setInterval(() => events.emit('change-name'), 1000);
+  events.on('browser-back', (event: Event) => {
+    // FIXME
+    const path = window.location.pathname;
+    const updater = pathToUpdater(path);
+    events.emit('update', updater);
+  });
   events.on('click-anchor', (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     const path = (<any> event.target).getAttribute('href');
+    // FIXME
     window.history.pushState(null, null, path);
     const updater = pathToUpdater(path);
     events.emit('update', updater);
@@ -147,6 +154,12 @@ const init = (state?: any): InitResponse => {
     ['a', 'click', makeEventListener('click-anchor')],
     ['button', 'click', makeEventListener('click-like')]
   ];
+  // FIXME
+  const window = Function('return this')();
+  if (window.addEventListener) {
+    const listener = makeEventListener('browser-back');
+    window.addEventListener('popstate', listener, false);
+  }
   return { emit, on, events, rootSelector };
 };
 
