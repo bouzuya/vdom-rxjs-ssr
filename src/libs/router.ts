@@ -22,4 +22,4 @@ class Router<T> {
   }
 }
 
-export { Router };
+export { Route, Router };
