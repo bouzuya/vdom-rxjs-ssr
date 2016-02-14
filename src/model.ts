@@ -62,10 +62,8 @@ const initEvents = (initialState: State): EventEmitter => {
 
 const client = (state?: any): ClientResponse => {
   const emitter = initEvents(state);
-  const on = (eventName: string, options?: any): void => {
-    emitter.on.apply(emitter, [eventName, options]);
-  };
   const emit = emitter.emit.bind(emitter);
+  const on = emitter.on.bind(emitter);
   const makeListenerProxy = (eventName: string): ListenerProxy => {
     return (...args: any[]): void => {
       emit.apply(null, [eventName].concat(args));
