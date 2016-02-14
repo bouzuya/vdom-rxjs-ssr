@@ -1,25 +1,6 @@
-import express from 'express';
-import { server } from './model';
-import renderToHTML from 'vdom-to-html';
-
-type Request = { path: string };
-type Response = { send: (html: string) => void };
+import run from './libs/server';
+import { server } from './app';
 
 export default function main() {
-  const app = express();
-  const { render } = server();
-  app.use((req: any, res: any, next: any) => {
-    console.log('%s %s %s', req.method, req.url, req.path);
-    next();
-  });
-  app.use(express.static(__dirname + '/../dist/'));
-  app.use((req: Request, res: Response): void => {
-    render(req.path)
-      .then(vtree => {
-        res.send(renderToHTML(vtree));
-      }, error => {
-        res.send(error.message);
-      });
-  });
-  app.listen(3000);
+  run(server);
 }
