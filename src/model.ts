@@ -7,23 +7,6 @@ import { PromisedState, PromisedStateUpdater } from 'promised-state';
 
 type Updater<T> = PromisedStateUpdater<T>;
 
-// Resource
-
-// dummy storage
-const users: User[] = [
-  { id: 0, name: 'user1', bio: 'Hello!', likeCount: 2 },
-  { id: 1, name: 'user2', bio: 'Hi!', likeCount: 1 },
-  { id: 2, name: 'user3', bio: '!olleH', likeCount: 0 }
-];
-
-const fetchUsers = (): Promise<User[]> => {
-  return Promise.resolve(users);
-};
-
-const fetchUser = (id: number): Promise<User> => {
-  return Promise.resolve(users[id]);
-};
-
 // Updater
 
 const clickLikeAction = (id: string): Updater<State> => {
