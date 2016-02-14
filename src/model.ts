@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 import { State, Updater } from './models/state';
 import { Router } from './libs/router';
 import { view } from './view';
-import { PromisedState } from 'promised-state';
 import clickLikeAction from './actions/click-like-action';
 import listUserAction from './actions/list-user-action';
 import showUserAction from './actions/show-user-action';
@@ -21,9 +20,9 @@ type ServerResponse = {
   render: (path: string) => Promise<VirtualDOM.VTree>;
 };
 
-const initEvents = (state: State): EventEmitter => {
+const initEvents = (initialState: State): EventEmitter => {
   const events = new EventEmitter();
-  const property = new PromisedState(state);
+  const promisedState = State.promised(initialState);
   setInterval(() => events.emit('change-name'), 1000);
   events.on('click-anchor', (event: Event) => {
     event.preventDefault();
@@ -46,7 +45,7 @@ const initEvents = (state: State): EventEmitter => {
     events.emit('update', showUserAction(id));
   });
   events.on('update', (updater: Updater): void => {
-    property
+    promisedState
       .update(updater)
       .then(state => view(state, false))
       .then(vtree => {

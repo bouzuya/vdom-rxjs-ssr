@@ -1,9 +1,13 @@
 import { User } from '../models/user';
-import { PromisedStateUpdater } from 'promised-state';
+import { PromisedState, PromisedStateUpdater } from 'promised-state';
 
-type State = {
+class State {
   users: User[];
   user: User;
+
+  static promised(initial: State): PromisedState<State> {
+    return new PromisedState(initial);
+  }
 };
 
 type Updater = PromisedStateUpdater<State>;
