@@ -1,6 +1,11 @@
 import { EventEmitter } from 'events';
 import { State, Updater } from './models/state';
-import { Router } from './libs/router';
+import {
+  ClientRouter,
+  ServerRouter,
+  makeClientRouter,
+  makeServerRouter
+} from './router';
 import { view } from './view';
 import clickLikeAction from './actions/click-like-action';
 import listUserAction from './actions/list-user-action';
@@ -13,7 +18,7 @@ type ClientResponse = {
   on: (eventName: string, options?: any) => void;
   rootSelector: string;
   events: [string, string, ListenerProxy][];
-  router: Router<void>;
+  router: ClientRouter;
 };
 
 type ServerResponse = {
@@ -60,9 +65,10 @@ const client = (state?: any): ClientResponse => {
   const on = (eventName: string, options?: any): void => {
     emitter.on.apply(emitter, [eventName, options]);
   };
+  const emit = emitter.emit.bind(emitter);
   const makeListenerProxy = (eventName: string): ListenerProxy => {
     return (...args: any[]): void => {
-      emitter.emit.apply(emitter, [eventName].concat(args));
+      emit.apply(null, [eventName].concat(args));
     };
   };
   const rootSelector = 'div#app';
@@ -70,18 +76,12 @@ const client = (state?: any): ClientResponse => {
     ['a', 'click', makeListenerProxy('click-anchor')],
     ['button', 'click', makeListenerProxy('click-like')]
   ];
-  const router = new Router<void>([
-    ['/users', makeListenerProxy('list-users')],
-    ['/users/:id', makeListenerProxy('show-user')]
-  ]);
+  const router = makeClientRouter(emit);
   return { events, on, rootSelector, router };
 };
 
 const server = (): ServerResponse => {
-  const router = new Router<Updater>([
-    ['/users', () => listUserAction()],
-    ['/users/:id', ([id]: string[]) => showUserAction(id)]
-  ]);
+  const router = makeServerRouter();
   const render = (path: string) => {
     const initialState: State = { users: [], user: null };
     return Promise
