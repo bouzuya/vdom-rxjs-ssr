@@ -1,25 +1,24 @@
 import { EventEmitter } from 'events';
-import { State } from './models/state';
-import { User } from './models/user';
+import { State, Updater } from './models/state';
 import { Router } from './libs/router';
 import { view } from './view';
-import { PromisedState, PromisedStateUpdater } from 'promised-state';
+import { PromisedState } from 'promised-state';
 import clickLikeAction from './actions/click-like-action';
 import listUserAction from './actions/list-user-action';
 import showUserAction from './actions/show-user-action';
 import changeNameAction from './actions/change-name-action';
 
-type Updater<T> = PromisedStateUpdater<T>;
-
-// init
-
 type ListenerProxy = (...args: any[]) => void;
 
-type InitResponse = {
+type ClientResponse = {
   on: (eventName: string, options?: any) => void;
   rootSelector: string;
   events: [string, string, ListenerProxy][];
   router: Router<void>;
+};
+
+type ServerResponse = {
+  render: (path: string) => Promise<VirtualDOM.VTree>;
 };
 
 const initEvents = (state: State): EventEmitter => {
@@ -46,7 +45,7 @@ const initEvents = (state: State): EventEmitter => {
   events.on('show-user', ([id]: string[]) => {
     events.emit('update', showUserAction(id));
   });
-  events.on('update', (updater: Updater<State>): void => {
+  events.on('update', (updater: Updater): void => {
     property
       .update(updater)
       .then(state => view(state, false))
@@ -57,7 +56,7 @@ const initEvents = (state: State): EventEmitter => {
   return events;
 };
 
-const client = (state?: any): InitResponse => {
+const client = (state?: any): ClientResponse => {
   const emitter = initEvents(state);
   const on = (eventName: string, options?: any): void => {
     emitter.on.apply(emitter, [eventName, options]);
@@ -79,8 +78,8 @@ const client = (state?: any): InitResponse => {
   return { events, on, rootSelector, router };
 };
 
-const server = (): { render: (path: string) => Promise<VirtualDOM.VTree> } => {
-  const router = new Router<Updater<State>>([
+const server = (): ServerResponse => {
+  const router = new Router<Updater>([
     ['/users', () => listUserAction()],
     ['/users/:id', ([id]: string[]) => showUserAction(id)]
   ]);
