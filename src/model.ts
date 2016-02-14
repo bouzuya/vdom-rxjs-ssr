@@ -4,47 +4,12 @@ import { User } from './models/user';
 import { Router } from './libs/router';
 import { view } from './view';
 import { PromisedState, PromisedStateUpdater } from 'promised-state';
+import clickLikeAction from './actions/click-like-action';
+import listUserAction from './actions/list-user-action';
+import showUserAction from './actions/show-user-action';
+import changeNameAction from './actions/change-name-action';
 
 type Updater<T> = PromisedStateUpdater<T>;
-
-// Updater
-
-const clickLikeAction = (id: string): Updater<State> => {
-  return (state: State): Promise<State> => {
-    const userId = parseInt(id, 10);
-    const newUsers = state.users.map(user => {
-      if (user.id !== userId) return user;
-      return Object.assign({}, user, { likeCount: user.likeCount + 1 });
-    });
-    return Promise.resolve(Object.assign({}, state, { users: newUsers }));
-  };
-};
-
-const listUserAction = (): Updater<State> => {
-  return (state: State): Promise<State> => {
-    return fetchUsers()
-      .then(user => Object.assign({}, state, ({ users, user: null })));
-  };
-};
-
-const showUserAction = (id: string): Updater<State> => {
-  return (state: State): Promise<State> => {
-    const userId = parseInt(id, 10);
-    return fetchUser(userId)
-      .then(user => Object.assign({}, state, ({ users: [], user })));
-  };
-};
-
-const changeNameAction = (): Updater<State> => {
-  return (state: State): Promise<State> => {
-    const { user } = state;
-    if (!user) return Promise.resolve(state);
-    const { name } = user;
-    const newUser = Object.assign({}, user, { name: name + '!' });
-    const newState = Object.assign({}, state, { user: newUser });
-    return Promise.resolve(newState);
-  };
-};
 
 // init
 
