@@ -13,7 +13,7 @@
     "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#1c56e368e17bb28ca57577250624ca5bd561aa81",
     "path-to-regexp": "github:bouzuya/my-dts/path-to-regexp/path-to-regexp.d.ts#9da7cde06da5e948df14e6bac6562f24406326b9",
     "vdom-parser": "github:bouzuya/my-dts/vdom-parser/vdom-parser.d.ts#66d43ffe2e932b29c414d3f82097f6c111cc9ada",
-    "vdom-to-html": "github:bouzuya/my-dts/vdom-to-html/vdom-to-html.d.ts#96230b43d1e12a55014fbcc23b1c0b1c4a7185f7",
+    "vdom-to-html": "github:bouzuya/my-dts/vdom-to-html/vdom-to-html.d.ts#6a33bb24ac5fdc820c2580d5d9891a39b746e11d",
     "virtual-dom": "github:DefinitelyTyped/DefinitelyTyped/virtual-dom/virtual-dom.d.ts#df507c636cf0c799a8a20f35af89a3d0caae6c32"
   }
 }
