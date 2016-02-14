@@ -30,7 +30,7 @@ const makeClient = (
       on(eventName, eventActions[eventName]);
     });
     on('state-updated', (state: any): void => {
-      emit('vtree-updatd', view(state, false));
+      emit('vtree-updated', view(state, false));
     });
     const makeListenerProxy = (eventName: string): ListenerProxy => {
       return (...args: any[]): void => {
