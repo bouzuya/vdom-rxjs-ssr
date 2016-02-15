@@ -10,9 +10,7 @@
     "moduleResolution": "node"
   },
   "files": [
-    "./src/client.ts",
-    "./src/server.ts",
-    "./test/add-test.ts",
+    "./src/app/server.ts",
     "./typings/main.d.ts"
   ]
 }

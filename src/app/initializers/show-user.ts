@@ -1,0 +1,11 @@
+import { InitializerParameters } from '../../framework/initializer';
+import { State } from '../models/state';
+import { User } from '../models/user';
+
+export default function showUserAction(
+  params: InitializerParameters
+): Promise<State> {
+  const userId = parseInt(params['id'], 10);
+  return User.fetchUser(userId)
+    .then(user => ({ users: [], user }));
+};
