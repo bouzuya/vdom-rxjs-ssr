@@ -1,12 +1,11 @@
 import express from 'express';
-import { Server } from './server';
-import { VTree } from './view';
+import { HTML } from './types';
 
 type Request = { path: string };
 type Response = { send: (html: string) => void };
 
 export default function main(
-  server: { request: (path: string) => Promise<VTree> }
+  server: { request: (path: string) => Promise<HTML> }
 ) {
   const app = express();
   app.use((req: any, res: any, next: any) => {
