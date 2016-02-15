@@ -1,6 +1,5 @@
-import { h } from 'virtual-dom';
+import { h, diff, patch, VTree } from 'virtual-dom';
 
-type VTree = any;
 type RTree = Element;
 
-export { h, VTree, RTree };
+export { h, diff, patch, VTree, RTree };
