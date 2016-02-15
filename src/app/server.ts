@@ -18,8 +18,8 @@ const initializers: { [name: string]: Initializer<State> } = {
   'user#show': showUserInitializer
 };
 
-const render = (state: State, all: boolean): VTree => {
-  return view(state, all);
+const render = (state: State): VTree => {
+  return view(state, true);
 };
 
 export default function main() {

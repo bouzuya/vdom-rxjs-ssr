@@ -7,12 +7,12 @@ import { VTree } from './view';
 
 class Server<State> {
   private initializers: { [actionName: string]: Initializer<State> };
-  private render: (state: State, all: boolean) => VTree;
+  private render: (state: State) => VTree;
   private router: Router;
 
   constructor(
     initializers: { [actionName: string]: Initializer<State> },
-    render: (state: State, all: boolean) => VTree,
+    render: (state: State) => VTree,
     routes: Route[]
   ) {
     this.initializers = initializers;
@@ -33,7 +33,7 @@ class Server<State> {
 
   private request(path: Path): Promise<HTML> {
     return this.init(path)
-      .then(state => this.render(state, true))
+      .then(state => this.render(state))
       .then(vtree => renderToHTML(vtree));
   }
 }
