@@ -10,6 +10,7 @@
     "moduleResolution": "node"
   },
   "files": [
+    "./src/app/client.ts",
     "./src/app/server.ts",
     "./typings/main.d.ts"
   ]
