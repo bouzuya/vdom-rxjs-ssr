@@ -12,6 +12,15 @@ class User {
   static fetchUser(id: number): Promise<User> {
     return Promise.resolve(users[id]);
   }
+
+  static addLike(id: number): Promise<User> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        users[id].likeCount += 1;
+        resolve(users[id]);
+      }, 3000);
+    });
+  }
 }
 
 // dummy storage
