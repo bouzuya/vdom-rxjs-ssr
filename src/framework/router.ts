@@ -13,15 +13,16 @@ class Router {
   }
 
   routes(path: Path): RouteResult {
+    const requestPath = path;
     for (var i = 0; i < this.config.length; i++) {
       const route = this.config[i];
       const { path, name } = route;
       const keys: any[] = [];
-      const match = pathToRegexp(path, keys).exec(path);
+      const match = pathToRegexp(path, keys).exec(requestPath);
       if (match) {
         const params: InitializerParameters = {};
         for (var j = 1; j < match.length; j++) {
-          params[keys[j - 1].name] = match[j + 1];
+          params[keys[j - 1].name] = match[j];
         }
         return { name, params };
       }
