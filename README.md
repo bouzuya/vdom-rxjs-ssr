@@ -1,6 +1,6 @@
-# virtual-dom-ssr
+# vdom-rxjs-ssr
 
-server-side rendering. virtual-dom & EventEmitter.
+A server-side rendering example. virtual-dom & rxjs. This is a [bouzuya/virtual-dom-ssr][].
 
 ## Usage
 
@@ -21,4 +21,4 @@ $ open http://localhost:3000/users/1
 [user]: https://github.com/bouzuya
 [email]: mailto:m@bouzuya.net
 [url]: http://bouzuya.net
-[bouzuya/cars]: https://github.com/bouzuya/cars
+[bouzuya/virtual-dom-ssr]: https://github.com/bouzuya/virtual-dom-ssr
