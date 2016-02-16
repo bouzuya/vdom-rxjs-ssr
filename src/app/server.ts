@@ -1,17 +1,12 @@
 import { Initializer, InitializerParameters } from '../framework/initializer';
 import { Server } from '../framework/server';
 import { VTree, h } from '../framework/view';
-import { Route } from '../framework/router';
 
 import { State } from './models/state';
 import listUserInitializer from './initializers/list-user';
 import showUserInitializer from './initializers/show-user';
 import { view } from './view';
-
-const routes: Route[] = [
-  { path: '/users', name: 'user#index' },
-  { path: '/users/:id', name: 'user#show' }
-];
+import { routes } from './configs/routes';
 
 const initializers: { [name: string]: Initializer<State> } = {
   'user#index': listUserInitializer,
