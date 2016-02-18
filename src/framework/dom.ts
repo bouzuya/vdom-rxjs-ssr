@@ -1,4 +1,4 @@
-import { diff, patch, VTree } from './view';
+import { diff, patch, VTree, RTree } from './view';
 import parse from 'vdom-parser';
 
 type MyEvent = [EventName, EventListener, [Selector, EventListener][]];
