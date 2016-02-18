@@ -10,14 +10,22 @@ const app = (
   { state, dom }: { state: State, dom: DOM }
 ): Observable<State> => {
   const click$ = dom
-    .on('button', 'click');
+    .on('button', 'click')
+    .map((event) => (<any> event.target).dataset.userId);
   const users$ = Observable
-    .of(state.users);
+    .of(state.users)
+    .merge(click$.map((id) => (users: User[]) => {
+      const user = users.filter(user => user.id === parseInt(id, 10))[0];
+      // FIXME:
+      if (user) user.likeCount += 1;
+      return users;
+    }))
+    .scan((users: User[], update: (users: User[]) => User[]) => update(users));
   const user$ = Observable
     .of(state.user)
     .merge(click$.map(() => (user: User) => {
       // FIXME:
-      user.likeCount += 1;
+      if (user) user.likeCount += 1;
       return user;
     }))
     .scan((user: User, update: (user: User) => User) => update(user));
