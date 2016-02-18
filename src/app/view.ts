@@ -24,7 +24,7 @@ const view = (state: State, all: boolean = false): VTree => {
   if (!all) return app;
   return h('html', [
     h('head', [
-      h('title', ['virtual-dom ssr']),
+      h('title', ['vdom-rxjs-ssr']),
       h('script', ['var INITIAL_STATE = ' + htmlescape(state) + ';'])
     ]),
     h('body', [
