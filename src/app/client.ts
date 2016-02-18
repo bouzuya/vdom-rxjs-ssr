@@ -5,42 +5,8 @@ import { VTree } from '../framework/view';
 import { State } from './models/state';
 import { User } from './models/user';
 import { view } from './view';
-
-const user$ = (
-  state: User,
-  clickedUserId$: Observable<string>,
-  timer$: Observable<any>
-): Observable<User> => {
-  return Observable
-    .of(state)
-    .merge(
-      clickedUserId$.map(() => (user: User) => {
-        // FIXME:
-        if (user) user.likeCount += 1;
-        return user;
-      }),
-      timer$.map(() => (user: User) => {
-        // FIXME:
-        if (user) user.name += '!'
-        return user;
-      }))
-    .scan((user: User, update: (user: User) => User) => update(user));
-};
-
-const users$ = (
-  state: User[],
-  clickedUserId$: Observable<string>
-): Observable<User[]> => {
-  return Observable
-    .of(state)
-    .merge(clickedUserId$.map((id) => (users: User[]) => {
-      const user = users.filter(user => user.id === parseInt(id, 10))[0];
-      // FIXME:
-      if (user) user.likeCount += 1;
-      return users;
-    }))
-    .scan((users: User[], update: (users: User[]) => User[]) => update(users));
-};
+import user$ from './properties/user';
+import users$ from './properties/users';
 
 const app = (
   { state, dom }: { state: State, dom: DOM }
