@@ -9,6 +9,8 @@ import { view } from './view';
 const app = (
   { state, dom }: { state: State, dom: DOM }
 ): Observable<State> => {
+  const timer$ = Observable
+    .interval(1000);
   const click$ = dom
     .on('button', 'click')
     .map((event) => (<any> event.target).dataset.userId);
@@ -23,11 +25,17 @@ const app = (
     .scan((users: User[], update: (users: User[]) => User[]) => update(users));
   const user$ = Observable
     .of(state.user)
-    .merge(click$.map(() => (user: User) => {
-      // FIXME:
-      if (user) user.likeCount += 1;
-      return user;
-    }))
+    .merge(
+      click$.map(() => (user: User) => {
+        // FIXME:
+        if (user) user.likeCount += 1;
+        return user;
+      }),
+      timer$.map(() => (user: User) => {
+        // FIXME:
+        if (user) user.name += '!'
+        return user;
+      }))
     .scan((user: User, update: (user: User) => User) => update(user));
   const state$ = Observable
     .combineLatest(
