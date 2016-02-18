@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { DOM } from './dom';
 import { VTree } from './view';
 
-type App<T> = (x: { state: T }) => Observable<T>;
+type App<T> = (x: { state: T; dom: DOM; }) => Observable<T>;
 
 class Client<State> {
   private rootSelector: string;
@@ -22,7 +22,7 @@ class Client<State> {
   run(): void {
     const dom = new DOM(this.rootSelector);
     const state: State = (<any> window).INITIAL_STATE;
-    const state$ = this.app({ state });
+    const state$ = this.app({ state, dom });
     state$
       .map(this.render)
       .subscribe(vtree => dom.renderToDOM(vtree));
