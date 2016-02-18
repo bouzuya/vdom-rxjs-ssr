@@ -43,7 +43,7 @@
     "build-browserify": "mkdir -p dist/scripts && browserify -o dist/scripts/bundle.js client.js",
     "build-es2015": "babel --presets es2015 --out-dir .tmp/es5/ .tmp/es2015/",
     "build-ts": "tsc",
-    "clean": "rm -rf lib/ .tmp/",
+    "clean": "rm -rf lib/ .tmp/ dist/ bundle.js",
     "copy-to-lib": "cp -r .tmp/es5/src/ lib/",
     "prepublish": "typings install && npm run clean && npm run build",
     "start": "node server.js",
