@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { User } from '../models/user';
 
-export default function user$(
+export default function users$(
   state: User[],
   clickedUserId$: Observable<string>
 ): Observable<User[]> {
