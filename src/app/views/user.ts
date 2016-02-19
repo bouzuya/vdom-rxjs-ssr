@@ -1,4 +1,5 @@
 import { h, VTree } from '../../framework/view';
+
 import { User } from '../models/user';
 
 const renderUser = (user: User): VTree => {

@@ -3,12 +3,13 @@ import { Client } from '../framework/client';
 import { DOM } from '../framework/dom';
 import { VTree } from '../framework/view';
 import { HistoryRouter } from '../framework/history-router';
+
+import { routes } from './configs/routes';
 import { State } from './models/state';
 import { User } from './models/user';
-import { view } from './view';
-import { routes } from './configs/routes';
 import user$ from './properties/user';
 import users$ from './properties/users';
+import { view } from './view';
 
 const app = (
   { state, dom, history }: { state: State, dom: DOM, history: HistoryRouter }

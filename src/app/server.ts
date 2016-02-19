@@ -2,11 +2,11 @@ import { Initializer, InitializerParameters } from '../framework/initializer';
 import { Server } from '../framework/server';
 import { VTree, h } from '../framework/view';
 
-import { State } from './models/state';
+import { routes } from './configs/routes';
 import listUserInitializer from './initializers/list-user';
 import showUserInitializer from './initializers/show-user';
+import { State } from './models/state';
 import { view } from './view';
-import { routes } from './configs/routes';
 
 const initializers: { [name: string]: Initializer<State> } = {
   'user#index': listUserInitializer,
