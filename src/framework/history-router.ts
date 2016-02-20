@@ -25,6 +25,7 @@ class HistoryRouter {
   }
 
   go(path: string, replace: boolean = false): void {
+    console.log('go : ' + path);
     if (this.history) {
       const f = replace ? history.replaceState : history.pushState;
       f.apply(history, [null, null, path]);

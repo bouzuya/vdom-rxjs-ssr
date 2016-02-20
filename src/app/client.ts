@@ -20,7 +20,6 @@ const app = (
       event.preventDefault();
       event.stopPropagation();
       const path = (<any> event.target).getAttribute('href');
-      console.log('go : ' + path);
       history.go(path);
     });
   const route$ = history
