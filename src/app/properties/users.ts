@@ -9,6 +9,10 @@ export default function users$(
   action$: Observable<Action>
 ): Observable<User[]> {
   type Updater = (users: User[]) => User[];
+  const clearUsersUpdater$ = action$
+    .filter(({ type }) => type === 'path-change')
+    .filter(({ params: { route: { name } } }) => name !== 'user#index')
+    .map(() => () => <User[]> []);
   const resetUsersUpdater$ = action$
     .filter(({ type }) => type === 'go-to-user-index')
     .mergeMap(() => Observable.fromPromise(User.fetchUsers()))
@@ -22,6 +26,7 @@ export default function users$(
     });
   const updater$: Observable<Updater> = Observable
     .merge(
+      clearUsersUpdater$,
       incrementLikeCountUpdater$,
       resetUsersUpdater$
     );
