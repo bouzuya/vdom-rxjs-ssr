@@ -5,6 +5,7 @@ import { VTree } from '../framework/view';
 import { HistoryRouter } from '../framework/history-router';
 
 import { routes } from './configs/routes';
+import { Action } from './models/action';
 import { State } from './models/state';
 import { User } from './models/user';
 import user$ from './properties/user';
@@ -29,9 +30,20 @@ const app = (
   const clickedUserId$ = dom
     .on('button', 'click')
     .map((event) => (<any> event.target).dataset.userId);
+  const goToUserIndexAction$ = route$
+    .filter(({ name }) => name === 'user#index')
+    .map(() => ({ type: 'go-to-user-index', params: {} }));
+  const incrementLikeCountAction$ = clickedUserId$
+    .map(id => parseInt(id, 10))
+    .map(id => ({ type: 'increment-like-count', params: { id } }));
+  const action$: Observable<Action> = Observable
+    .merge(
+      goToUserIndexAction$,
+      incrementLikeCountAction$
+    );
   const state$ = Observable
     .combineLatest(
-      users$(state.users, route$, clickedUserId$),
+      users$(state.users, action$),
       user$(state.user, route$, clickedUserId$, timer$),
       (users, user) => {
         return { users, user };

@@ -1,29 +1,33 @@
 import { Observable } from 'rxjs';
 import { RouteResult } from '../../framework/router';
 
+import { Action } from '../models/action';
 import { User } from '../models/user';
 
 export default function users$(
   state: User[],
-  route$: Observable<RouteResult>,
-  clickedUserId$: Observable<string>
+  action$: Observable<Action>
 ): Observable<User[]> {
+  type Updater = (users: User[]) => User[];
+  const resetUsersUpdater$ = action$
+    .filter(({ type }) => type === 'go-to-user-index')
+    .mergeMap(() => Observable.fromPromise(User.fetchUsers()))
+    .map((users) => () => users);
+  const incrementLikeCountUpdater$ = action$
+    .filter(({ type }) => type === 'increment-like-count')
+    .map(({ params: { id } }) => (users: User[]) => {
+      const user = users.filter(user => user.id === id)[0];
+      if (user) user.likeCount += 1; // FIXME
+      return users;
+    });
+  const updater$: Observable<Updater> = Observable
+    .merge(
+      incrementLikeCountUpdater$,
+      resetUsersUpdater$
+    );
   return Observable
     .of(state)
-    .merge(
-      route$
-        .filter(({ name }) => name === 'user#index')
-        .mergeMap(() => {
-          return Observable.fromPromise(User.fetchUsers());
-        })
-        .map((users) => () => users),
-      clickedUserId$.map((id) => (users: User[]) => {
-        const user = users.filter(user => user.id === parseInt(id, 10))[0];
-        // FIXME:
-        if (user) user.likeCount += 1;
-        return users;
-      })
-    )
-    .scan((users: User[], update: (users: User[]) => User[]) => update(users));
+    .merge(updater$)
+    .scan((users: User[], updater: Updater) => updater(users));
 };
 
