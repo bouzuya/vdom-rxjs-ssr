@@ -1,6 +1,6 @@
 # vdom-rxjs-ssr
 
-A server-side rendering example. virtual-dom & rxjs. This is a [bouzuya/virtual-dom-ssr][].
+A server-side rendering example. virtual-dom & rxjs. This is a [bouzuya/virtual-dom-ssr][] fork.
 
 ## Usage
 
