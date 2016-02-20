@@ -25,26 +25,39 @@ const app = (
     });
   const route$ = history
     .changes();
-  const timer$ = Observable
-    .interval(1000);
   const clickedUserId$ = dom
     .on('button', 'click')
     .map((event) => (<any> event.target).dataset.userId);
+
+  const changeNameAction$ = Observable
+    .interval(1000)
+    .map(() => ({ type: 'change-name', params: {} }));
   const goToUserIndexAction$ = route$
     .filter(({ name }) => name === 'user#index')
     .map(() => ({ type: 'go-to-user-index', params: {} }));
+  const goToUserShowAction$ = route$
+    .filter(({ name }) => name === 'user#show')
+    .map(({ params: { id } }) => {
+      const userId = parseInt(id, 10);
+      return { type: 'go-to-user-show', params: { id: userId } };
+    });
   const incrementLikeCountAction$ = clickedUserId$
     .map(id => parseInt(id, 10))
     .map(id => ({ type: 'increment-like-count', params: { id } }));
+  const pathChangeAction$ = route$
+    .map(route => ({ type: 'path-change', params: { route } }));
   const action$: Observable<Action> = Observable
     .merge(
+      changeNameAction$,
       goToUserIndexAction$,
-      incrementLikeCountAction$
+      goToUserShowAction$,
+      incrementLikeCountAction$,
+      pathChangeAction$
     );
   const state$ = Observable
     .combineLatest(
       users$(state.users, action$),
-      user$(state.user, route$, clickedUserId$, timer$),
+      user$(state.user, action$),
       (users, user) => {
         return { users, user };
       });
