@@ -1,6 +1,10 @@
 # vdom-rxjs-ssr
 
+**DEPRECATED** See: [bouzuya/rally-rxjs][].
+
 A server-side rendering example. virtual-dom & rxjs. This is a [bouzuya/virtual-dom-ssr][] fork.
+
+[bouzuya/rally-rxjs]: https://github.com/bouzuya/rally-rxjs
 
 ## Usage
 
